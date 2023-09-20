@@ -1,0 +1,62 @@
+{% extends "flights/layout.html" %}
+
+{% block body %}
+<button type="button" onclick="BackForm()">Back</button>
+<button type="submit">
+    <a href="{% url 'logout' %}" style="text-decoration:none;color:black">
+      Log out
+    </a>
+</button>
+
+<h1 style="text-align:center">List of Airports</h1>
+<center>
+{% if messages %}
+    {% for message in messages %}
+      <div class="success-message" style="color:green;"><h1>{{ message }}</h1></div>
+    {% endfor %}
+  {% endif %}
+</center>
+
+    <table style="width:60%;text-align:center;border:1px solid black;margin-left: auto;margin-right: auto;">
+        <tr>
+          <th style="border: 1px solid black;width:50%">CITY</th> 
+          <th style="border: 1px solid black;width:50%">CODE</th>
+          <th style="border: 1px solid black;">Edit</th>
+          <th style="border: 1px solid black;">Delete</th>
+        </tr>
+        {% for airport in airports %}
+        <tr>
+            <td style="border: 1px solid black;">{{airport.city}}</td>
+            <td style="border: 1px solid black;">{{airport.code}}</td>
+            <td style="border: 1px solid black;">
+                <a href="/flights/update-airport/{{airport.id}}"><button type="submit">Edit</button></a>
+            </td>
+
+            <td style="border: 1px solid black;">
+                <a href="/flights/delete/{{airport.id}}"><button type="submit" onclick="return confirmDelete()">Delete</button></a>
+            </td>            
+        </tr>
+        {% endfor %}
+        <div style="display:flex; justify-content:center; align-items:center">
+            <a href="{% url 'add_airport' %}" style="text-decoration:none;color:black;margin-top:30px">
+                <button type="submit" style="">Add Airport</button>
+            </a>
+        </div>
+        </table>
+
+        <script>
+          function BackForm() {
+            window.location.href = "/flights/options/";
+          }
+            function confirmDelete() {
+                return confirm("Are you sure you want to delete this airport?");
+            }
+            setTimeout(function() {
+                var successMessage = document.querySelector('.success-message');
+                if (successMessage) {
+                  successMessage.remove();
+                }
+              }, 2000);
+        </script>
+            
+{% endblock %}

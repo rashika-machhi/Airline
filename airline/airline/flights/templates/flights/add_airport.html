@@ -1,0 +1,35 @@
+<form method="post" onsubmit="return validateForm()">
+  {% csrf_token %}
+  <h1>{% if page_type == 'update' %}Update Airport{% else %}Add Airport{% endif %}</h1>
+  
+  <label for="city">City:</label>
+  <input type="text" id="city" name="city" style="text-transform:capitalize"
+  {% if airport %}value="{{ airport.city }}"{% else %}value="{{ city }}"{% endif %}
+    required>
+  {% comment %} value="{% if airport %}{{ airport.city }}{% endif %} {% endcomment %}
+  <br>
+  <span id="cityError" class="error" style="color:red">{{ city_error }}</span> 
+  <br>
+  <label for="code">Code:</label>
+  <input type="text" id="code" name="code" maxlength="3" onkeyup="this.value = this.value.toUpperCase();"
+  {% if airport %}value="{{ airport.code }}"{% else %}value="{{ code }}"{% endif %}
+    required>
+    {% comment %} {% if selected_code %}value="{{ code }}"{% elif airport %}value="{{ airport.code }}"{% endif %} {% endcomment %}
+  <br>
+  <span id="codeError" class="error" style="color:red">{{ code_error }}</span>
+  <br>
+  <span id="errorMessages" class="error" style="color:red">{{ error_message }}</span> 
+  <br>
+  <button type="submit" id="saveButton">Save</button>
+  <button type="button" onclick="cancelForm()">Cancel</button>
+</form>
+<script>
+  function cancelForm() {
+    window.location.href = "/flights/Airport_list/";
+  }
+  function validateForm() {
+    var saveButton = document.getElementById("saveButton");
+    saveButton.disabled = true;
+  }
+  
+ </script>

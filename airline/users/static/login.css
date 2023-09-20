@@ -1,0 +1,90 @@
+*{
+    box-sizing: border-box;
+}
+body{
+    margin:0;
+    height: 100vh;
+    width: 100vw;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #555;
+    background-color: #ecf0f3;
+}
+
+.form{
+    width: 350px;
+    height: auto;
+    box-shadow: 13px 13px 20px #cbced1,-13px -13px 20px #fff; 
+    background-color: #9adfff;
+}
+h1{
+    text-align: center;
+    font-size: 28px;
+    padding-top: 24px;
+    letter-spacing: 0.5px;
+    color: #fff;
+}
+.login_feilds{
+    width: 100%;
+    padding: 40px 5px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+.login_feilds input{
+    border: none;
+    outline: none;
+    background: none;
+    font-size: 15px;
+    color: #555;
+    padding: 10px;  
+    
+}
+input.username,input.password{
+    margin-bottom: 20px ;
+    border-radius: 25px;
+    box-shadow: inset 8px 8px 8px #cbced1,inset -8px -8px 8px #fff;
+    background-color: whitesmoke;
+}
+/* input.btn{
+    cursor: pointer;
+    width: 30%;
+    height: 40px;
+    border-radius: 30px;
+    font-size: 15px;
+    font-weight: 700;
+    color: #fff;
+    text-align: center;
+    background-color: rgb(3, 34, 100);
+    box-shadow: 3px 3px 8px #b1b1b1,-3px -3px 8px #fff ;
+} */
+
+.error-message{
+    color:red;
+    border:1px solid red;
+    width:40%;
+    font-size:10px;
+}
+/* Apply inline-block display to both buttons and add spacing */
+.button-container .btn {
+    display: inline-block;
+    margin-right: 10px; /* Adjust the margin as needed to add spacing between buttons */
+    cursor: pointer;
+    /* width: 30%;
+    height: 40px; */
+    border-radius: 30px;
+    font-size: 15px;
+    font-weight: 700;
+    color: #fff;
+    text-align: center;
+    background-color: rgb(3, 34, 100);
+    box-shadow: 3px 3px 8px #b1b1b1,-3px -3px 8px #fff ;
+  }
+  
+  /* Optional: To center the buttons horizontally within the container */
+.button-container {
+    text-align: center;
+}

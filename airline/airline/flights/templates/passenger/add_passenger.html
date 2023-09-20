@@ -1,0 +1,34 @@
+<form method="post">
+  {% csrf_token %}
+  
+  <h1>{% if page_type == 'update' %}Update Passenger{% else %}Add Passenger{% endif %}</h1>
+  
+  <label for="firstname">Firstname:</label>
+  <input type="text" id="firstname" name="first" style="text-transform:capitalize" 
+  {% if passenger %}value="{{ passenger.first }}"{% else %}value="{{ first }}"{% endif %} required>
+  {% comment %} value="{% if passenger %}{{ passenger.first }}{% endif %}"  {% endcomment %}
+  <br>
+  <span id="firstErrorMessages" class="error" style="color:red">{{ first_error_message }}</span> 
+  <br>
+  <label for="lastname">Lastname:</label>
+  <input type="text" id="lastname" name="last" style="text-transform:capitalize" 
+  {% if passenger %}value="{{ passenger.last }}"{% else %}value="{{ last }}"{% endif %} required>
+  <br>
+  <span id="lastErrorMessages" class="error" style="color:red">{{ last_error_message }}</span> 
+  <br>
+
+  <button type="submit" id="saveButton">Save</button>
+  <button type="button" onclick="cancelForm()">Cancel</button>
+</form>
+
+<script>
+function cancelForm() {
+  window.location.href = "/flights/Passenger_list/";
+}
+
+function validateForm() {
+  var saveButton = document.getElementById("saveButton");
+  saveButton.disabled = true;
+  return true;
+}
+</script>

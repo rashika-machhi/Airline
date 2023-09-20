@@ -1,0 +1,104 @@
+html, body {
+    margin: 0;
+    padding: 0;
+    height:100%;
+}
+
+.navbar {
+    background-color:  #9adfff;
+    height:40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 20px;
+}
+
+.menu ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.menu li {
+    display: inline-block;
+    margin-left: 20px;
+}
+
+.menu li:first-child {
+    margin-left: 0;
+}
+
+.menu a {
+    color:rgb(3, 34, 100);
+    text-decoration: none;
+    font-size:1.5vw;
+    padding: 5px;
+    
+}
+
+.menu a:hover {
+    color: whitesmoke;
+    background-color:rgb(3, 34, 100);
+    border-radius: 30px;
+}
+
+.logout a {
+    color:rgb(3, 34, 100);
+    text-decoration: none;
+    font-size:1.5vw;
+    padding: 5px;
+}
+
+.logout a:hover {
+    color: whitesmoke;
+    background-color:rgb(3, 34, 100);
+    border-radius: 30px;
+}
+
+.side_content {
+    display: flex; 
+    height:calc(100% - 40px);
+}
+
+.sidebar {
+    background-color: #9adfff;
+    height:100%;
+    position: sticky;
+    left:0;
+}
+
+.sidebar ul {
+    list-style: none;
+    padding: 0;
+}
+
+.sidebar li {
+    margin-bottom: 10px;
+}
+
+.sidebar a {
+    color:rgb(3, 34, 100);
+    font-size:1.5vw;
+    display: block;
+    padding: 10px;
+    text-decoration: none;
+    text-align: center;
+}
+
+.sidebar a:hover {
+    color: whitesmoke;
+    background-color:rgb(3, 34, 100);
+    border-radius: 30px;
+}
+
+.container {
+    flex: 1;
+    background-color: #ecf0f3;
+    overflow-x: auto;
+}
+
+@media (max-width: 768px) {
+    .menu a, .logout a, .sidebar a {
+        font-size: 3.5vw;
+    }
+}

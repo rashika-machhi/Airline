@@ -1,0 +1,64 @@
+{% extends "flights/homepage.html" %}
+{% block head %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+{% endblock %}
+{% block body%}
+
+<div class="container" style="display:flex;justify-content:center;align-items:center" >
+  <div class="row" style="flex-basis:70%;">
+  <form method="post" onsubmit="return validateForm()" style="width:80%;text-align:center;margin-left: auto;margin-right: auto;">
+  {% csrf_token %}
+  <h1>{% if page_type == 'update' %}Update Airport{% else %}Add Airport{% endif %}</h1>
+  
+  <label for="city">City:</label>
+  <input type="text" id="city" name="city" autocomplete="off" autofocus onkeyup="capitalizeWords(this)"
+  {% if airport %}value="{{ airport.city }}"{% else %}value="{{ city }}"{% endif %}
+    required>
+  <br>
+
+  <span id="cityError" class="error" style="color:red">{{ city_error }}</span> 
+
+  <br>
+
+  <label for="code">Code:</label>
+  <input type="text" id="code" name="code" autocomplete="off" maxlength="3" onkeyup="this.value = this.value.toUpperCase();" 
+  {% if airport %}value="{{ airport.code }}"{% else %}value="{{ code }}"{% endif %}
+    required>
+  <br>
+
+  <span id="codeError" class="error" style="color:red">{{ code_error }}</span>
+
+  <br>
+
+  <span id="errorMessages" class="error" style="color:red">{{ error_message }}</span> 
+
+  <br>
+
+  <button type="submit" id="saveButton">Save</button>
+  <button type="button" onclick="cancelForm()">Cancel</button>
+</form>
+</div>
+</div>
+<script>
+  function cancelForm() {
+    window.location.href = "/flights/Airport_list/";
+  }
+  
+  function validateForm() {
+    var saveButton = document.getElementById("saveButton");
+    saveButton.disabled = true;
+  }
+
+  function capitalizeWords(input) {
+    var words = input.value.split(' ');
+  
+    for (var i = 0; i < words.length; i++) {
+      words[i] = words[i].charAt(0).toUpperCase() + words[i].slice(1);
+    }
+  
+    input.value = words.join(' ');
+  }
+  
+ </script>
+ {% endblock %}

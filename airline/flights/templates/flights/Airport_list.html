@@ -1,0 +1,124 @@
+{% extends "flights/homepage.html" %}
+{% load static %}
+
+    {% block head %}
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        {% block extra_css %}
+            <link rel="stylesheet" href="{% static 'css/Airport_list.css' %}">
+        {% endblock %}
+    {% endblock %}
+
+    {% block body %}
+
+    <div class="container" style="display:flex;justify-content:center;align-items:center;" >
+        <div class="row" style="flex-basis:70%;">
+            <div class="airport_list">
+                <h1>List of Airports </h1>
+
+                <center>
+                    {% if messages %}
+                        {% for message in messages %}
+                        <div class="success-message" style="color:green;"><h1>{{ message }}</h1></div>
+                        {% endfor %}
+                    {% endif %}
+                </center>
+
+                <div class="add">
+                    <button type="submit" class="btn">
+                        <a href="{% url 'add_airport' %}">Add Airport</a>
+                    </button>
+                </div>
+
+        <form method="GET" action="{% url 'Airport_list' %}" id="airport_filter_form">
+            {% csrf_token %}
+
+            <div class="airports">
+                 <div class="filter">
+                  <label for="filter">Filter:</label>
+                  <select name="city" id="city" onchange="handleFilterChange()">
+                    <option value="">----ALL----</option>
+                    {% for airport_Rec in City_List %}
+                      <option value="{{ airport_Rec.city }}" {% if selected_filter == airport_Rec.city %}selected{% endif %} > {{ airport_Rec.city }}</option>
+                    {% endfor %}
+                  </select>
+                  <button type="submit" class="btn">Filter</button>
+                </div>
+                <div class="search">
+                  <label for="search">Search:</label>
+                  <input type="text" name="search_query" placeholder="Search" autocomplete="off" value="{% if selected_filter %}{% if not search_query %}{% else %}{{ search_query }}{% endif %}{% else %}{% endif %}" autofocus style="width:50%; box-sizing: border-box;">
+                  <button type="submit" class="btn">Search</button>
+                </div>
+            </div>
+
+            <div class="scroll" >
+                <table class="table">
+                    <tr>
+                        <th>City</th> 
+                        <th>Code</th>
+                        <th>Edit</th>
+                        <th>Delete</th>
+                    </tr>
+                    <tr>
+                        <td colspan="4"></td>
+                    </tr>
+                    {% for airport in airports %}
+                    <tr>
+                        <td style="border:1px solid black;border-collapse: collapse;">{{airport.city}}</td>
+                        <td style="border:1px solid black;border-collapse: collapse;">{{airport.code}}</td>
+                        <td style="border:1px solid black;border-collapse: collapse;"><button type="button"><a href="/flights/update-airport/{{airport.id}}">Edit</a></button></td>
+                        <td style="border:1px solid black;border-collapse: collapse;"><button type="button"><a href="/flights/delete/{{airport.id}}" onclick="return confirmDelete('{{airport.city}}')">Delete</a></button></td>
+                    </tr>
+                    {% endfor %}
+                </table>
+            </div>
+
+            <table class="pagination">
+        
+                <tr>
+                {% if airports.has_previous %}
+                    <th class="page-item">
+                        <a class="page-link" href="?page={{airports.previous_page_number}}{% if selected_filter %}&city={{ selected_filter }}{% endif %}{% if search_query %}&search_query={{ search_query }}{% endif %}" tabindex="-1">Previous</a>
+                    </th>
+                {% endif %}
+            
+                {% for page_number in totalpagelist %}
+                    <th class="page-item" >
+                        <a class="page-link" href="/flights/Airport_list/?page={{page_number}}{% if selected_filter %}&city={{ selected_filter }}{% endif %}{% if search_query %}&search_query={{ search_query }}{% endif %}">{{page_number}}</a>
+                    </th>
+                {% endfor %}
+            
+                {% if airports.has_next %}
+                    <th class="page-item">
+                        <a class="page-link" href="?page={{airports.next_page_number}}{% if selected_filter %}&city={{ selected_filter }}{% endif %}{% if search_query %}&search_query={{ search_query }}{% endif %}">Next</a>
+                    </th>
+                {% endif %}
+                </tr>    
+            </table>
+        </form>
+    </div>
+    </div>
+    </div>
+
+
+    <script>
+        function handleFilterChange() {
+            function handleFilterChange() {
+                document.getElementById('search_query').value = '';
+                document.getElementById('airport_filter_form').submit();
+              }
+        }
+    
+        function confirmDelete(city) {
+            return confirm("Are you sure you want to delete " + city + "?");
+        }
+    
+        setTimeout(function() {
+            var successMessage = document.querySelector('.success-message');
+            if (successMessage) {
+                successMessage.remove();
+            }
+        }, 2000);
+    </script>
+
+    {% endblock %}

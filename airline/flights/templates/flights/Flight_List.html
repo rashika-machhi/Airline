@@ -1,0 +1,115 @@
+{% extends "flights/homepage.html" %}
+{% load static %}
+
+{% block head %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {% block extra_css %}
+        <link rel="stylesheet" href="{% static 'css/flight_list.css' %}">
+    {% endblock %}
+
+{% endblock %}
+
+{% block body %}
+
+<div class="container" style="display:flex;justify-content:center;align-items:center" >
+    <div class="row" style="flex-basis:70%;">
+        <div class="flight_list">
+            <h1> List of Flights </h1>
+
+            <center>
+            {% if messages %}
+                {% for message in messages %}
+                <div class="success-message" style="color:green;"><h1>{{ message }}</h1></div>
+                {% endfor %}
+            {% endif %}
+            </center>
+
+            <div class="add">
+                <button type="submit" class="btn">
+                    <a href="{% url 'addflight' %}">Add Flight</a>
+                </button>
+            </div>
+
+            <form method="GET" action="{% url 'FlightList' %}">
+            {% csrf_token %}
+
+             <div class="flights">
+                <div class="filter">
+                    <label for="filter">Filter:</label>
+                        <select name="Origin" id="Origin" >
+                            <option value="">----ALL----</option>
+                                {% for flight_Rec in Origin_List %}
+                                    <option value="{{ flight_Rec.city }}" {% if selected_filter == flight_Rec.city %}selected{% endif %} > {{ flight_Rec.city }}</option>
+                                {% endfor %}
+                        </select>
+                        <button type="submit" class="btn">Filter</button>
+                </div>
+                <div class="search">
+                    <label for="search">Search:</label>
+                        <input type="text" name="search_query" placeholder="Search" autocomplete="off" autofocus value="{% if selected_filter %}{% if not search_query %}{% else %}{{ search_query }}{% endif %}{% else %}{% endif %}" style="width:50%; box-sizing: border-box;">
+                        <button type="submit" class="btn">Search</button>
+                </div>
+            </div> 
+    <div class="scroll" >
+        <table class="table">
+             <tr>
+                <th>Origin</th>
+                <th>Destination</th>
+                <th>Duration</th>
+                <th>Edit</th>
+                <th>Delete</th>
+                <th>Passenger</th>
+            </tr> 
+            {% for TempFlight in LOCFlightList %}
+            <tr>
+                <td style="border: 1px solid black;">{{TempFlight.origin}}</td>
+                <td style="border: 1px solid black;">{{TempFlight.destination}}</td>
+                <td style="border: 1px solid black;">{{TempFlight.duration}}</td>
+                <td style="border: 1px solid black;"><button type="button"><a href="/flights/edit-flight/{{TempFlight.id}}">Edit</a></button></td>
+                <td style="border: 1px solid black;"><button type="button"><a href="/flights/delete-flight/{{TempFlight.id}}" onclick="return conf_Delete('{{TempFlight.origin}}','{{TempFlight.destination}}')">Delete</a></button></td>
+                <td style="border: 1px solid black;"><button type="button"><a href="{% url 'flight' TempFlight.id %}">Passenger</a></button></td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+
+    <table class="pagination">
+        <tr>
+            {% if LOCFlightList.has_previous %}
+                <th class="page-item" style="border: 1px solid black">
+                    <a class="page-link" href="?page={{LOCFlightList.previous_page_number}}{% if selected_filter %}&Origin={{ selected_filter }}{% endif %}{% if search_query %}&search_query={{ search_query }}{% endif %}" tabindex="-1">Previous</a>
+                </th>
+            {% endif %}
+
+            {% for page_number in totalpagelist %}
+                <th class="page-item" style="border: 1px solid black">
+                    <a class="page-link" href="/flights/Flight_List/?page={{page_number}}{% if selected_filter %}&Origin={{ selected_filter }}{% endif %}{% if search_query %}&search_query={{ search_query }}{% endif %}">{{page_number}}</a>
+                </th>
+            {% endfor %}
+
+            {% if LOCFlightList.has_next %}
+                <th class="page-item" style="border: 1px solid black">
+                    <a class="page-link" href="?page={{LOCFlightList.next_page_number}}{% if selected_filter %}&Origin={{ selected_filter }}{% endif %}{% if search_query %}&search_query={{ search_query }}{% endif %}" >Next</a>
+                </th>
+            {% endif %}
+        </tr>
+    </table>
+</form>
+</div>
+</div>
+</div>
+
+<script>
+  function conf_Delete(origin, destination) {
+    return confirm("Are you sure you want to delete the flight from " + origin + " to " + destination + "?");
+  }
+  
+  setTimeout(function() {
+    var successMessage = document.querySelector('.success-message');
+    if (successMessage) {
+      successMessage.remove();
+    }
+  }, 2000);
+</script>
+{% endblock %}

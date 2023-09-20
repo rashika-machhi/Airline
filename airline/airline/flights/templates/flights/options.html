@@ -1,0 +1,14 @@
+{% extends "flights/layout.html" %}
+{
+    {% block body %}
+    <a href="{% url 'Airport_list' %}" style="text-decoration:none;color:black;margin-top:30px">
+        <button type="submit" style="">Airport</button>
+    </a>
+    <a href="{% url 'FlightList' %}" style="text-decoration:none;color:black;margin-top:30px">
+        <button type="submit" style="">Flight</button>
+    </a>    
+    <a href="{% url 'Passenger_list' %}" style="text-decoration:none;color:black;margin-top:30px">
+        <button type="submit" style="">Passenger</button>
+    </a>
+    {% endblock %}
+}

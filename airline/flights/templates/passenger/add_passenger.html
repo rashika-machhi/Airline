@@ -1,0 +1,56 @@
+{% extends "flights/homepage.html" %}
+{% block head %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+{% endblock %}
+{% block body%}
+
+<div class="container" style="display:flex;justify-content:center;align-items:center" >
+  <div class="row" style="flex-basis:70%;">
+
+  <form method="post" onsubmit="return validateForm()" style="width:80%;text-align:center;margin-left: auto;margin-right: auto;">
+  {% csrf_token %}
+  
+  <h1>{% if page_type == 'update' %}Update Passenger{% else %}Add Passenger{% endif %}</h1>
+  
+  <label for="firstname">Firstname:</label>
+  <input type="text" id="firstname" name="first" autocomplete="off" autofocus onkeyup="capitalizeWords(this)" 
+  {% if passenger %}value="{{ passenger.first }}"{% else %}value="{{ first }}"{% endif %} >
+  <br>
+  <span id="firstErrorMessages" class="error" style="color:red">{{ first_error_message }}</span> 
+  <br>
+  <label for="lastname">Lastname:</label>
+  <input type="text" id="lastname" name="last" autocomplete="off" onkeyup="capitalizeWords(this)" 
+  {% if passenger %}value="{{ passenger.last }}"{% else %}value="{{ last }}"{% endif %} >
+  <br>
+  <span id="lastErrorMessages" class="error" style="color:red">{{ last_error_message }}</span> 
+  <br>
+
+  <button type="submit" id="saveButton">Save</button>
+  <button type="button" onclick="cancelForm()">Cancel</button>
+</form>
+</div>
+</div>
+{% endblock %}
+
+<script>
+ 
+
+function validateForm() {
+  var saveButton = document.getElementById("saveButton");
+  saveButton.disabled = true;
+  return true;
+}
+function cancelForm() {
+  window.location.href = "/flights/Passenger_list/";
+}
+function capitalizeWords(input) {
+  var words = input.value.split(' ');
+
+  for (var i = 0; i < words.length; i++) {
+    words[i] = words[i].charAt(0).toUpperCase() + words[i].slice(1);
+  }
+
+  input.value = words.join(' ');
+}
+</script>

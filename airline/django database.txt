@@ -1,0 +1,389 @@
+django-admin startproject airline
+cd airline
+code .
+python manage.py startapp flights
+
+setting.py
+    'flights',
+
+urls.py
+ from django.contrib import admin
+ from django.urls import path,include
+
+urlpatterns = [
+    path('admin/', admin.site.urls),
+    path("flights/",include("flights.urls")),
+]
+
+urls.py
+from django.urls import path
+from . import views
+
+urlpatterns = [
+    
+]
+
+models.py
+from django.db import models
+
+# Create your models here.
+class Flight(models.Model):
+    origin = models.CharField(max_length=64)
+    destination= models.CharField(max_length=64)
+    duration = models.IntegerField()
+
+cmd:
+python manage.py makemigrations
+
+python manage.py migrate
+
+python manage.py shell
+
+from flights.models import Flight
+f= Flight(origin="India", destination="Canada", duration=415)
+f.save()
+
+Flight.objects.all()
+exit()
+
+models.py
+def __str__(self):
+        return f"{self.id}: {self.origin} to {self.destination}"
+
+
+
+python manage.py shell
+
+from flights.models import Flight
+flights = Flight.objects.all()
+flights
+
+flight = flights.first()
+flight
+	<flight: 1: India to Canada>
+flight.id
+	1
+flight.origin
+	'India'
+flight.destination
+	'Canada'
+flight.duration
+	415
+flight.delete()
+
+exit()
+
+
+
+models.py
+
+class Airport(models.Model):
+    code = models.CharField(max_length=3)
+    city = models.CharField(max_length=64)
+
+    def __str__(self):
+        return f"{self.city} ({self.code})"
+
+class flight(models.Model):
+    origin = models.ForeignKey(Airport, on_delete=models.CASCADE, related_name="departures")
+    destination= models.ForeignKey(Airport, on_delete=models.CASCADE, related_name="arrivals")
+    duration = models.IntegerField()
+
+    def __str__(self):
+        return f"{self.id}: {self.origin} to {self.destination}"
+
+
+cmd:
+python manage.py makemigrations
+python manage.py migrate
+
+python manage.py shell
+from flights.models import *
+>>> jfk = Airport(code="JFK", city="Canada")
+>>> jfk.save()
+>>> lhr = Airport(code="LHR", city="India")
+>>> lhr.save()
+>>> cdg = Airport(code="CDG", city="Paris")
+>>> cdg.save()
+>>> nrt = Airport(code="NRT", city="Tokyo")
+>>> nrt.save()
+>>> f = Flight(origin=jfk, destination = lhr, duration=415)
+>>> f.save()
+
+>>> f
+>>> f.origin
+>>> f.origin.city
+>>> f.origin.code
+>>> lhr.arrivals.all()
+
+
+
+urls.py
+
+from django.urls import path
+from . import views
+
+urlpatterns = [
+    path("",views.index,name="index")
+]
+
+views.py
+
+from django.shortcuts import render
+from . models import Flight
+
+# Create your views here.
+def index(request):
+    return render(request,"flights/index.html",{
+        "flights": Flight.objects.all()
+    })
+
+layout.html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flights</title>
+</head>
+<body>
+    {% block body %}
+    {% endblock %}
+</body>
+</html>
+
+index.html
+
+{% extends "flights/layout.html" %}
+
+{
+    {% block body %}
+        <h1>Flights</h1>
+        <ul>
+            {% for flight in flights %}
+                <li>Flight {{flight.id}}: {{flight.origin}} to {{flight.destination}}</li>
+            {% endfor %}
+        </ul>
+    {% endblock %}
+}
+
+cmd:
+
+python manage.py shell
+
+from flights.models import *
+Airport.objects.all()
+Airport.objects.filter(city="India")
+Airport.objects.filter(city="India").first()
+Airport.objects.get(city="India")
+
+jfk=Airport.objects.get(city="Canada")
+cdg=Airport.objects.get(city="Paris")
+cdg
+
+f= Flight(origin=jfk,destination=cdg,duration=435)
+f.save()
+
+exit()
+
+python manage.py runserver
+
+python manage.py createsuperuser
+
+
+admin.py
+from django.contrib import admin
+from .models import Flight, Airport
+# Register your models here.
+
+admin.site.register(Airport)
+admin.site.register(Flight)
+
+
+cmd:
+python manage.py runserver
+
+
+in browser:
+127.0.0.1:8000/admin
+
+......................
+......................
+......................
+......................
+
+
+urls.py
+
+from django.urls import path
+from . import views
+
+urlpatterns = [
+    path("",views.index,name="index"),
+    path("<int:flight_id",views.flight, name="flight")
+]
+
+views.py
+
+from django.shortcuts import render
+from . models import flight,airport
+
+# Create your views here.
+def index(request):
+    return render(request,"flights/index.html",{
+        "flights": Flight.objects.all()
+    })
+
+def flight(request, flight_id):
+    flight= Flight.objects.get(pk=flight_id)
+    return render(request,"flights/flight.html",{
+        "flight":flight
+    })
+
+flight.html
+
+{% extends 'flights/layout.html' %}
+
+{% block body %}
+    <h1>Flight{{flight.id}}</h1>
+
+    <ul>
+        <li>Origin:{{flight.origin}}</li>
+        <li>Destination:{{flight.destination}}</li>
+        <li>Duration:{{flight.duration}}</li>
+    </ul>
+{% endblock %}
+
+models.py
+
+from django.db import models
+
+# Create your models here.
+    
+class Passenger(models.Model):
+    first = models.CharField(max_length=64)
+    last = models.CharField(max_length=64)
+    flights= models.ManyToManyField(Flight, blank=True, related_name="passengers")
+
+    def __str__(self):
+        return f"{self.first} {self.last}"
+
+cmd:
+python manage.py makemigrations
+python manage.py migrate
+
+admin.py
+
+from django.contrib import admin
+from .models import Flight,Airport, Passenger
+# Register your models here.
+
+admin.site.register(Airport)
+admin.site.register(Flight)
+admin.site.register(Passenger)
+
+python manage.py makemigrations
+python manage.py migrate  
+python manage.py runserver
+
+in browser:
+127.0.0.1:8000/admin
+
+.............................
+...............................
+..............................
+............................
+.........................
+
+views.py
+
+
+def flight(request, flight_id):
+    flight= Flight.objects.get(pk=flight_id)
+    return render(request,"flights/flight.html",{
+        "flight":flight,
+        "passengers":flight.passengers.all()
+    })
+
+flight.html
+
+
+
+    <h2>passengers</h2>
+    <ul>
+        {% for passenger in passengers %}
+            <li>{{passenger}}</li>
+        {% empty %}
+            <li>No Passenger</li>
+        {% endfor %}
+    </ul>
+
+
+..........................
+..........................
+flight.html
+
+<a href="{% url 'index' %}"> Back to Flight List</a>
+
+
+index.html
+
+
+                <li>
+                    <a href="{% url 'flight' flight.id %}">
+                        flight {{flight.id}}: {{flight.origin}} to {{flight.destination}}
+                    </a>
+                </li>
+            
+
+
+urls.py
+
+from django.urls import path
+from . import views
+
+urlpatterns = [
+    path("",views.index,name="index"),
+    path("<int:flight_id",views.flight, name="flight"),
+    path("<int:flight_id>/book",views.book, name="book")
+]
+
+views.py
+
+from django.shortcuts import render
+from django.http import HttpResponseRedirect
+from . models import Flight,Airport,Passenger
+from django.urls import reverse
+
+def book(request,flight_id):
+    if request.method == "POST":
+        flight = Flight.objects.get(pk = flight_id)
+        passenger = Passenger.objects.get(pk=request.POST["passenger"])
+        passenger.flights.add(flight)
+        return HttpResponseRedirect(reverse("flight",args=(flight.id,)))
+
+flight.html
+
+
+    <h2> Add Passenger</h2>
+    <form action = "{% url 'book' flight.id %}" method="post">
+        {% csrf_token %}
+        <select name="passenger">
+            {% for passenger in non_passengers %}
+                <option value="{{passenger.id}}">{{passenger}}</option>
+            {% endfor %}
+        </select>
+        <input type="submit">
+
+views.py
+
+        "non_passengers": passenger.objects.exclude(flights = flight).all()
+    })
+
+def book(request,flight_id):
+    if request.method == "POST":
+        flight = flight.objects.get(pk = flight_id)
+        passenger = passenger.objects.get(pk=request.POST["passenger"])
+        passenger.flights.add(flight)
+        return HttpResponseRedirect(reverse("flight",args=(flight.id,)))
+

@@ -1,0 +1,62 @@
+{% extends "flights/flight.html" %}
+
+{% block body %}
+<button type="button" onclick="BackForm()">Back</button>
+<button type="submit">
+    <a href="{% url 'logout' %}" style="text-decoration:none;color:black">
+      Log out
+    </a>
+</button>
+  
+  <h1 style="text-align:center"> List of Flights </h1>
+  <center>
+  {% if messages %}
+    {% for message in messages %}
+      <div class="success-message" style="color:green;"><h1>{{ message }}</h1></div>
+    {% endfor %}
+  {% endif %}
+  </center>
+
+  <table style="width:60%;text-align:center;border:1px solid black;margin-left: auto;margin-right: auto;">
+    <tr>
+      <th style="border: 1px solid black;width:50%">Origin</th> 
+      <th style="border: 1px solid black;width:50%">Destination</th>
+      <th style="border: 1px solid black;width:50%">Duration</th>
+      <th style="border: 1px solid black;">Edit</th>
+      <th style="border: 1px solid black;">Delete</th>
+    </tr>
+    {% for TempFlight in LOCFlightList %}
+    <tr>
+        <td style="border: 1px solid black;">{{TempFlight.origin}}</td>
+        <td style="border: 1px solid black;">{{TempFlight.destination}}</td>
+        <td style="border: 1px solid black;">{{TempFlight.duration}}</td>
+        <td style="border: 1px solid black;">
+          <a href="/flights/edit-flight/{{TempFlight.id}}"><button type="submit">Edit</button></a>
+        </td>
+        <td style="border: 1px solid black;">
+          <a href="/flights/delete-flight/{{TempFlight.id}}"><button type="submit" onclick="return conf_Delete()">Delete</button></a>
+      </td> 
+    </tr>
+    {% endfor %}
+    <div style="display:flex; justify-content:center; align-items:center">
+        <a href="{% url 'addflight' %}" style="text-decoration:none;color:black;margin-top:30px">
+          <button type="submit" style="">Add Flight</button>
+        </a>
+    </div>
+</table>
+
+<script>
+  function BackForm() {
+    window.location.href = "/flights/options/";
+  }
+  function conf_Delete() {
+      return confirm("Are you sure you want to delete this flight?");
+  }
+  setTimeout(function() {
+    var successMessage = document.querySelector('.success-message');
+    if (successMessage) {
+      successMessage.remove();
+    }
+  }, 2000);
+</script>
+{% endblock %}

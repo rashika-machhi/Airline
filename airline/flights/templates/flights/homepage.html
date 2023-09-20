@@ -1,0 +1,71 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Airline{% endblock %}</title>
+    {% load static %}
+    {% block extra_head %}{% endblock %}
+        <link rel="stylesheet" href="{% static 'css/homepage.css' %}">
+    {% block extra_css %}{% endblock %}
+</head>
+
+<body>
+
+<!-- ============================== Navbar =========================================== -->
+<div class="navbar" >
+    <div class="logo">
+        <a href="#" id="logo">
+        <!-- Logo content goes here -->
+            <img src="{% static 'images/logo.png' %}" alt="Logo" style="height: 40px; width: 50px;">
+        </a>
+    </div>
+    <div class="menu" >
+        <!-- Menu items go here -->
+        <ul>
+            <li><a href="{% url 'Airport_list' %}">Airport</a></li>
+            <li><a href="{% url 'FlightList' %}">Flight</a></li>
+            <li><a href="{% url 'Passenger_list' %}">Passenger</a></li>
+        </ul>
+    </div>
+    <div class="logout">
+        <!-- Logout button or link goes here -->
+        {% if user.is_authenticated %}
+            <a href="{% url 'logout' %}">Logout</a>
+        {% else %}
+            <a href="{% url 'login' %}">Login</a>
+        {% endif %}
+    </div>
+</div>
+
+<!-- ============================== Sidebar & Content =========================================== -->
+
+<div class="side_content">
+    <div class="sidebar">
+        <!-- Sidebar content goes here -->
+        <ul>
+            <li><a href="{% url 'Airport_list' %}">Airport</a></li>
+            <li><a href="{% url 'FlightList' %}">Flight</a></li>
+            <li><a href="{% url 'Passenger_list' %}">Passenger</a></li>
+        </ul>
+    </div>
+    <div class="container">
+        {% block body %}{% endblock %}
+    </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const logo = document.getElementById("logo");
+    
+        logo.addEventListener("click", function (event) {
+          event.preventDefault();
+          BackForm(); 
+        });
+      });
+    
+      function BackForm() {
+        window.location.href = "/flights/homepage/";
+      }    
+</script>
+</body>
+</html>

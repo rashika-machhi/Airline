@@ -1,0 +1,38 @@
+{% extends "users/layout.html" %}
+{% load static %}
+
+    {% block head %}
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">  
+        <link rel="stylesheet" href="{% static 'login.css' %}">
+    {% endblock %}
+
+    {% block body %}
+        <div class="form">
+        <h1> LOGIN </h1>
+        {% if messages %}
+            {% for message in messages %}
+            <center>
+                <div class="error-message"><p>{{ message }}</p></div>
+            </center>
+            {% endfor %}
+        {% endif %}
+
+        <form action="{% url 'login' %}" method="post">
+            {% csrf_token %}
+            <div class="login_feilds" >
+                <input type="text" name="username" class="username" placeholder="UserName" autocomplete="off" autofocus value="{{ username }}">
+                <input type="password" name="password" class="password" placeholder="Password" value="{{ password }}">
+                <div class="button-container">
+                    <input type="button" class="btn" value="Cancel" onclick="goBack()">
+                    <input type="submit" class="btn" value="Login">
+                </div>
+            <div>
+            </form>
+        </div>
+        <script>
+            function goBack() {
+                window.location.href = "/";
+              }
+        </script>
+    {% endblock %}

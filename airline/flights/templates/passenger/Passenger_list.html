@@ -1,0 +1,121 @@
+{% extends "flights/homepage.html" %}
+{% load static %}
+
+{% block head %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {% block extra_css %}
+        <link rel="stylesheet" href="{% static 'css/passenger_list.css' %}">
+    {% endblock %}
+{% endblock %}
+
+{% block body %}
+
+<div class="container" style="display:flex;justify-content:center;align-items:center" >
+    <div class="row" style="flex-basis:70%;">
+        <div class="passenger_list">
+            <h1>List of Passengers</h1>   
+
+            <center>
+            {% if messages %}
+            {% for message in messages %}
+                <div class="success-message" style="color:green;"><h1>{{ message }}</h1></div>
+            {% endfor %}
+            {% endif %}
+            </center>
+
+            <div class="add">
+                <button type="submit" class="btn">
+                    <a href="{% url 'add_passenger' %}">Add passenger</a>
+                </button>
+            </div>
+
+            <form method="GET" action="{% url 'Passenger_list' %}">
+                {% csrf_token %}
+    
+                <div class="passenger">
+                    <div class="filter">
+                      <label for="filter">Filter:</label>
+                      <select name="first" id="first" onchange="handleFilterChange()">
+                        <option value="">----ALL----</option>
+                            {% for firstname_Rec in Passenger_List %}
+                                <option value="{{ firstname_Rec.first }}" {% if selected_filter == firstname_Rec.first %}selected{% endif %}>{{ firstname_Rec.first }}</option>
+                            {% endfor %}
+                        </select>
+                        <button type="submit" class="btn">Filter</button>
+                    </div>
+                    <div class="search">
+                      <label for="search">Search:</label>
+                      <input type="text" name="search_query" placeholder="Search" autocomplete="off" autofocus value="{% if selected_filter %}{% if not search_query %}{% else %}{{ search_query }}{% endif %}{% else %}{% endif %}" style="width:50%; box-sizing: border-box;">
+                      <button type="submit" class="btn">Search</button>
+                    </div>
+                </div>
+    
+                <div class="scroll" >
+                    <table class="table">
+                    <tr>
+                    <th>Firstname</th> 
+                    <th>Lastname</th>
+                    <th>Edit</th>
+                    <th>Delete</th>
+                    </tr>
+                    <tr>
+                    <td colspan="4"></td>
+                    </tr>
+                     {% for passenger in passengers %}
+                    <tr>
+                        <td style="border: 1px solid black;">{{passenger.first}}</td>
+                        <td style="border: 1px solid black;">{{passenger.last}}</td>
+
+                        <td style="border: 1px solid black;">
+                            <a href="/flights/update-passenger/{{passenger.id}}"><button type="button">Edit</button></a>
+                        </td>
+                        <td style="border: 1px solid black;">
+                            <a href="/flights/delete-passenger/{{passenger.id}}" onclick="return confirmDelete('{{passenger.first}}', '{{passenger.last}}')"><button type="button">Delete</button></a>
+                        </td>        
+                    </tr>
+                    {% endfor %} 
+                    </table>
+                </div>
+
+                <table class="pagination">
+                    <tr>
+                        {% if passengers.has_previous %}
+                            <th class="page-item" style="border: 1px solid black">
+                                <a class="page-link" href="?page={{passengers.previous_page_number}}{% if selected_filter %}&first={{ selected_filter }}{% endif %}{% if search_query %}&search_query={{ search_query }}{% endif %}" tabindex="-1">Previous</a>
+                            </th>
+                        {% endif %}
+            
+                        {% for passenger in totalpagelist %}
+                            <th class="page-item" style="border: 1px solid black">
+                                <a class="page-link" href="/flights/Passenger_list/?page={{passenger}}{% if selected_filter %}&first={{ selected_filter }}{% endif %}{% if search_query %}&search_query={{ search_query }}{% endif %}">{{passenger}}</a>
+                            </th>
+                        {% endfor %}
+            
+                        {% if passengers.has_next %}
+                            <th class="page-item" style="border: 1px solid black">
+                                <a class="page-link" href="?page={{passengers.next_page_number}}{% if selected_filter %}&first={{ selected_filter }}{% endif %}{% if search_query %}&search_query={{ search_query }}{% endif %}">Next</a>
+                            </th>
+                        {% endif %}
+                    </tr>
+                </table>      
+            </form>
+        </div>
+    </div>
+</div>
+  
+    <script>
+      function BackForm() {
+        window.location.href = "/flights/homepage/";
+      }
+      function confirmDelete(firstName, lastName) {
+        return confirm("Are you sure you want to delete " + firstName + " " + lastName + "?");
+    }
+        setTimeout(function() {
+            var successMessage = document.querySelector('.success-message');
+            if (successMessage) {
+              successMessage.remove();
+            }
+          }, 2000);
+    </script>
+    {% endblock %}

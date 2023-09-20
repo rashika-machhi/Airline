@@ -1,0 +1,125 @@
+{% extends "flights/homepage.html" %}
+{% block head %}
+  <meta charset="UTF-8">    
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+{% endblock %} 
+
+{% block body%}
+
+<div class="container" style="display:flex;justify-content:center;align-items:center" >
+  <div class="row" style="flex-basis:70%;">
+  <form method="post" onsubmit="return validateForm()" style="width:80%;text-align:center;margin-left: auto;margin-right: auto;">
+  {% csrf_token %}
+
+  <h1>{% if flight %}Update Flight{% else %}Add Flight{% endif %}</h1>
+
+  <label for="origin">Origin:</label>
+  <select name="origin" id="origin">
+    <option value="">----selected----</option>
+
+    {% for airport in LOCAirport %}
+      <option value="{{ airport.id }}" 
+        {% if selected_origin == airport.id %}selected{% endif %}
+        {% if flight and flight.origin_id == airport.id %}selected{% endif %} 
+        {% if origin_error %}disabled{% endif %}required>
+        {{ airport.city }}
+      </option>
+    {% endfor %} 
+  </select>
+
+  <br>
+
+  {% if errors and 'Please select an origin.' in errors %}
+  <span class="error" style="color: red">Please select an origin.</span><br>
+{% endif %}
+
+  <br>
+
+  <label for="destination">Destination:</label>
+  <select name="destination" id="destination">
+    <option value="">----selected----</option>
+
+    {% for airport in LOCAirport %}
+      <option value="{{ airport.id }}" 
+        {% if selected_destination == airport.id %}selected{% endif %}
+        {% if flight and flight.destination_id == airport.id %}selected{% endif %}
+        {% if destination_error %}disabled{% endif %} required> 
+        {{ airport.city }}
+      </option>
+    {% endfor %}
+  </select>
+
+  <br>
+
+  {% if errors and 'Please select a destination.' in errors %}
+    <span class="error" style="color: red">Please select a destination.</span><br>
+  {% endif %}
+  
+  <br>
+
+  <label for="duration">Duration:</label>
+  <input type="number" name="duration" id="duration" 
+    {% if flight %}value="{{ flight.duration }}"{% else %}value="{{duration}}"{% endif %}
+    required>
+  <br>
+
+  <span id="durationError" class="error" style="color:red">{{ duration_error }}</span>
+
+  <br>
+
+  <span id="errorMessages" class="error" style="color:red">{{ error_message }}</span>
+
+  <br>
+
+  <button type="submit" id="saveButton">Save</button>
+  <button type="button" onclick="cancelForm()">Cancel</button>
+</form>
+</div>
+</div>
+
+<script>
+  function cancelForm() {
+    window.location.href = "/flights/Flight_List/";
+  }
+
+  function validateForm() {
+    var origin = document.getElementById("origin").value;
+    var destination = document.getElementById("destination").value;
+    var duration = document.getElementById("duration").value;
+  
+    var originError = document.getElementById("originError");
+    var destinationError = document.getElementById("destinationError");
+    var durationError = document.getElementById("durationError");
+    var saveButton = document.getElementById("saveButton");
+  
+    originError.innerHTML = "";
+    destinationError.innerHTML = "";
+    durationError.innerHTML = "";
+    errorMessages.innerHTML=""
+  
+    if (origin === "") {
+      originError.innerHTML = "Please select an origin.";
+      return false;
+    }
+  
+    if (destination === "") {
+      destinationError.innerHTML = "Please select a destination.";
+      return false;
+    }
+  
+    if (origin === destination) {
+      destinationError.innerHTML = "Source and destination cannot be the same.";
+      return false;
+    }
+    
+    if (duration === "" || duration <= 0) {
+      durationError.innerHTML = "Duration must be a greater than 0.";
+      return false;
+    }
+
+    saveButton.disabled = true;
+    return true;
+  }
+</script>
+{% endblock %}
+

@@ -1,0 +1,157 @@
+<form method="post" onsubmit="return validateForm()">
+  {% csrf_token %}
+
+  <h1>{% if flight %}Update Flight{% else %}Add Flight{% endif %}</h1>
+
+  <label for="origin">Origin:</label>
+  <select name="origin" id="origin">
+    <option value="">----selected----</option>
+    {% for airport in LOCAirport %}
+      <option value="{{ airport.id }}" 
+        {% comment %} {% if flight and flight.origin_id == airport.id %}selected{% endif %}  {% endcomment %}
+        {% if selected_origin == airport.id %}selected{% endif %}
+        {% if flight and flight.origin_id == airport.id %}selected{% endif %} 
+        {% if origin_error %}disabled{% endif %}required>
+        {{ airport.city }}
+      </option>
+    {% endfor %}
+
+    {% comment %} {% for airport in LOCAirport %}
+      <option value="{{ airport.id }}" 
+        {% if existing_flight and existing_flight.origin.id == airport.id %}
+          selected
+        {% elif flight and flight.origin_id == airport.id %}
+          selected
+        {% elif origin_error %}
+          disabled
+        {% else %}
+           origin
+        {% endif %}required>
+        {{ airport.city }}
+      </option>
+    {% endfor %} {% endcomment %}
+
+    {% comment %} {% if existing_flight %}
+    <option value="{{ existing_flight.origin.id }}" selected>
+      {{ existing_flight.origin.city }}
+    </option>
+    {% endif %}  {% endcomment %}
+    
+  </select>
+  <br>
+  <span id="originError" class="error" style="color:red">{{ origin_error }}</span>
+  <br>
+
+  
+  <label for="destination">Destination:</label>
+  <select name="destination" id="destination">
+    <option value="">----selected----</option>
+
+    {% for airport in LOCAirport %}
+      <option value="{{ airport.id }}" 
+      {% comment %} {% if existing_flight and existing_flight.destination.id == airport.id %}selected{% endif %} {% endcomment %}
+        {% if selected_destination == airport.id %}selected{% endif %}
+        {% if flight and flight.destination_id == airport.id %}selected{% endif %}
+        {% if destination_error %}disabled{% endif %} required> 
+        {{ airport.city }}
+      </option>
+    {% endfor %}
+
+    {% comment %} {% for airport in LOCAirport %}
+      <option value="{{ airport.id }}" 
+        {% if existing_flight and existing_flight.destination.id == airport.id %}
+          selected
+        {% elif flight and flight.destination_id == airport.id %}
+          selected
+        {% elif destination_error %}
+          disabled
+        {% else %}
+           destination
+        {% endif %}required>
+        {{ airport.city }}
+      </option>
+    {% endfor %} {% endcomment %}
+
+      {% comment %} {% if existing_flight %}
+      <option value="{{ existing_flight.destination.id }}" selected>
+        {{ existing_flight.destination.city }}
+      </option>
+      {% endif %} {% endcomment %}
+
+  </select>
+  <br>
+  <span id="destinationError" class="error" style="color:red">{{ destination_error }}</span>
+  <br>
+  <label for="duration">Duration:</label>
+  <input type="number" name="duration" id="duration" 
+    {% comment %} {% if existing_flight %}value="{{ existing_flight.duration }}"{% elif flight %}value="{{ flight.duration }}"{% endif %} {% endcomment %}
+    {% if flight %}value="{{ flight.duration }}"{% else %}value="{{duration}}"{% endif %}
+    required>
+
+    
+
+  {% comment %} <input type="number" name="duration" id="duration" 
+    {% if duration_error %}class="error"{% endif %}
+    {% if existing_flight %} {{ existing_flight.duration }} {% endif %}
+    {% if flight %} {{ flight.duration }} {% endif %}
+    {% if duration_error %}disabled{% endif %}
+  required> {% endcomment %}
+
+  {% comment %} <input type="number" name="duration" id="duration" {% if duration_error %}class="error"{% endif %} value="{% if existing_flight %}{{ existing_flight.duration }}{% else %}{{ flight.duration }}{% endif %}" required> {% endcomment %}
+  {% comment %} <input type="number" name="duration" id="duration" {% if duration_error %}class="error"{% endif %} value="{% if existing_flight %}{{ existing_flight.duration }}{% endif %}" required> {% endcomment %}
+  {% comment %} <input type="number" name="duration" id="duration" value="{% if existing_flight %}{{ existing_flight.duration }}{% endif %}" {% if duration_error %}disabled{% endif %} required> {% endcomment %}
+  {% comment %} <input type="number" name="duration" id="duration" value="{% if flight %}{{ flight.duration }}{% endif %}" {% if duration_error %}disabled{% endif %} required> {% endcomment %}
+  <br>
+  <span id="durationError" class="error" style="color:red">{{ duration_error }}</span>
+  <br>
+  <span id="errorMessages" class="error" style="color:red">{{ error_message }}</span>
+  <br>
+  <button type="submit" id="saveButton">Save</button>
+  <button type="button" onclick="cancelForm()">Cancel</button>
+</form>
+
+<script>
+  function cancelForm() {
+    window.location.href = "/flights/Flight_List/";
+  }
+
+  function validateForm() {
+    var origin = document.getElementById("origin").value;
+    var destination = document.getElementById("destination").value;
+    var duration = document.getElementById("duration").value;
+  
+    var originError = document.getElementById("originError");
+    var destinationError = document.getElementById("destinationError");
+    var durationError = document.getElementById("durationError");
+    var saveButton = document.getElementById("saveButton");
+  
+    originError.innerHTML = "";
+    destinationError.innerHTML = "";
+    durationError.innerHTML = "";
+    errorMessages.innerHTML=""
+  
+    if (origin === "") {
+      originError.innerHTML = "Please select an origin.";
+      return false;
+    }
+  
+    if (destination === "") {
+      destinationError.innerHTML = "Please select a destination.";
+      return false;
+    }
+  
+    if (origin === destination) {
+      destinationError.innerHTML = "Source and destination cannot be the same.";
+      return false;
+    }
+    
+    if (duration === "" || duration <= 0) {
+      durationError.innerHTML = "Duration must be a greater than 0.";
+      return false;
+    }
+
+    saveButton.disabled = true;
+    return true;
+  }
+</script>
+
